@@ -133,18 +133,15 @@ def load_data():
 
     for c in train_df_values.columns:
         print c, train_df_values[c].dtype
-
-    train_id = train_df_labels['id'].values
-    test_id = test_df_labels['id'].values
     
     xtrain = train_df_values.values[:,1:]
     ytrain = train_df_labels.values[:,1:]
     xtest = test_df_values.values[:,1:]
-    ytest = test_df_labels.values[:,1:]
+    ytest = test_df_labels
     
-    print xtrain.shape, ytrain.shape, xtest.shape, ytest.shape, train_id.shape, test_id.shape
+    print xtrain.shape, ytrain.shape, xtest.shape, ytest.shape
     
-    return xtrain, ytrain, xtest, ytest, train_id, test_id
+    return xtrain, ytrain, xtest, ytest
 
 def calculate_log_loss(ypred, ytest):
     if ypred.shape != ytest.shape:
@@ -169,9 +166,20 @@ def score_model(model, xtrain, ytrain):
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     return model.score(xTest, yTest)
 
+def prepare_submission(model, xtrain, ytrain, xtest, ytest):
+	model.fit(xtrain, ytrain)
+	ytest_pred = model.predict(xtest)
+	
+	for idx in range(ord('a'), ord('n')+1):
+		c = 'service_%s' % chr(idx)
+		ytest[c] = ytest_pred[:,idx]
+	
+	ytest.to_csv('submit.csv', index=False)
 
 if __name__ == '__main__':
-    xtrain, ytrain, xtest, ytest, train_id, test_id = load_data()
+    xtrain, ytrain, xtest, ytest = load_data()
 
-    model = RandomForestRegressor(n_estimators=20, n_jobs=-1)
+    model = RandomForestRegressor(n_estimators=10, n_jobs=-1)
     print score_model(model, xtrain, ytrain)
+
+	prepare_submission(model, xtrain, ytrain, xtest, ytest)
