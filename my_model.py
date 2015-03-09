@@ -181,8 +181,8 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
     #model = RandomForestRegressor(n_estimators=50, n_jobs=-1)
-    #model = LogisticRegression()
-    model = SGDRegressor()
+    model = LogisticRegression()
+    #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
     #prepare_submission(model, xtrain, ytrain, xtest, ytest)
