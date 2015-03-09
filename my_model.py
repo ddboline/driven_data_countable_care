@@ -174,5 +174,5 @@ def score_model(model, xtrain, ytrain):
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest, train_id, test_id = load_data()
 
-    model = RandomForestRegressor(n_estimators=800, n_jobs=-1)
+    model = RandomForestRegressor(n_estimators=10, n_jobs=-1)
     print score_model(model, xtrain, ytrain)
