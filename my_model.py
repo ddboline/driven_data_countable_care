@@ -113,8 +113,8 @@ def load_data():
     test_df_labels = pd.read_csv('SubmissionFormat.csv')
     test_df_values = pd.read_csv('test_values.csv', low_memory=False)
 
-    print train_df_labels.columns
-    print train_df_values.columns
+    #print train_df_labels.columns
+    #print train_df_values.columns
     #print test_df_labels.columns
     #print test_df_values.columns
 
@@ -126,14 +126,14 @@ def load_data():
 
     #get_plots(train_df_values)
 
-    print train_df_labels.columns
-    print test_df_labels.columns
+    #print train_df_labels.columns
+    #print test_df_labels.columns
 
-    print 'train', train_df_labels.shape, train_df_values.shape
-    print 'test', test_df_labels.shape, test_df_values.shape
+    #print 'train', train_df_labels.shape, train_df_values.shape
+    #print 'test', test_df_labels.shape, test_df_values.shape
 
-    for c in train_df_values.columns:
-        print c, train_df_values[c].dtype
+    #for c in train_df_values.columns:
+        #print c, train_df_values[c].dtype
 
     xtrain = train_df_values.values[:,1:]
     ytrain = train_df_labels.values[:,1]
