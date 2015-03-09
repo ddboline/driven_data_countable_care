@@ -8,7 +8,7 @@ import pylab as pl
 import numpy as np
 import pandas as pd
 
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
 
@@ -180,8 +180,9 @@ def prepare_submission(model, xtrain, ytrain, xtest, ytest):
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
-    model = RandomForestRegressor(n_estimators=50, n_jobs=-1)
+    #model = RandomForestRegressor(n_estimators=50, n_jobs=-1)
     #model = LogisticRegression()
+    model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
-    prepare_submission(model, xtrain, ytrain, xtest, ytest)
+    #prepare_submission(model, xtrain, ytrain, xtest, ytest)
