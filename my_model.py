@@ -137,13 +137,10 @@ def load_data():
     train_id = train_df_labels['id'].values
     test_id = test_df_labels['id'].values
     
-    for df in train_df_values, test_df_values, train_df_labels, test_df_labels:
-        df = df.drop(labels=['id'], axis=1)
-    
-    xtrain = train_df_values.values
-    ytrain = train_df_labels.values
-    xtest = test_df_values.values
-    ytest = test_df_labels.values
+    xtrain = train_df_values.values[:,1:]
+    ytrain = train_df_labels.values[:,1:]
+    xtest = test_df_values.values[:,1:]
+    ytest = test_df_labels.values[:,1:]
     
     print xtrain.shape, ytrain.shape, xtest.shape, ytest.shape, train_id.shape, test_id.shape
     
