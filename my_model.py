@@ -8,6 +8,7 @@ import pylab as pl
 import numpy as np
 import pandas as pd
 
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
 
@@ -172,14 +173,15 @@ def prepare_submission(model, xtrain, ytrain, xtest, ytest):
 
     for idx in range(ord('a'), ord('n')+1):
         c = 'service_%s' % chr(idx)
-        ytest[c] = ytest_pred[:,idx]
+        ytest[c] = ytest_pred[:,idx-ord('a')]
 
     ytest.to_csv('submit.csv', index=False)
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
-    model = RandomForestRegressor(n_estimators=10, n_jobs=-1)
+    #model = RandomForestRegressor(n_estimators=10, n_jobs=-1)
+    model = LogisticRegression()
     print score_model(model, xtrain, ytrain)
 
     prepare_submission(model, xtrain, ytrain, xtest, ytest)
