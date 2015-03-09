@@ -145,7 +145,7 @@ def load_data():
     xtest = test_df_values.values
     ytest = test_df_labels.values
     
-    print xtrain.shape, ytrain.shape, xtest.shape, ytest.shape, train_id, test_id
+    print xtrain.shape, ytrain.shape, xtest.shape, ytest.shape, train_id.shape, test_id.shape
     
     return xtrain, ytrain, xtest, ytest, train_id, test_id
 
@@ -167,7 +167,7 @@ def score_model(model, xtrain, ytrain):
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     ytest_pred = model.predict(xTest)
     print 'logloss', calculate_log_loss(ytest_pred, yTest)
-    print 'rmsle', calculate_rmsle(ytest_pred, yTest)
+    #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     return model.score(xTest, yTest)
 
 
