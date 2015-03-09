@@ -8,6 +8,9 @@ import pylab as pl
 import numpy as np
 import pandas as pd
 
+from sklearn.ensemble import RandomForestRegressor
+
+
 def create_html_page_of_plots(list_of_plots):
     if not os.path.exists('html'):
         os.makedirs('html')
@@ -155,5 +158,21 @@ def calculate_log_loss(ypred, ytest):
     log_loss = (-1/n) * np.sum( ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
     return log_loss
 
+def score_model(model, xtrain, ytrain):
+    randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
+    xTrain, xTest, yTrain, yTest = \
+      cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
+					random_state=randint)
+    model.fit(xTrain, yTrain)
+    #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
+    ytest_pred = model.predict(xTest)
+    print 'logloss', calculate_log_loss(ytest_pred, yTest)
+    print 'rmsle', calculate_rmsle(ytest_pred, yTest)
+    return model.score(xTest, yTest)
+
+
 if __name__ == '__main__':
-    xtrain.shape, ytrain.shape, xtest.shape, ytest.shape, train_id, test_id = load_data()
+    xtrain, ytrain, xtest, ytest, train_id, test_id = load_data()
+
+    model = RandomForestRegressor()
+    print score_model(model, xtrain, ytrain)
