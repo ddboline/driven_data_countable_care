@@ -136,7 +136,7 @@ def load_data():
         print c, train_df_values[c].dtype
 
     xtrain = train_df_values.values[:,1:]
-    ytrain = train_df_labels.values[:,1:]
+    ytrain = train_df_labels.values[:,1]
     xtest = test_df_values.values[:,1:]
     ytest = test_df_labels
 
