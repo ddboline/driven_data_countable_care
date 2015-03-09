@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.ensemble import RandomForestRegressor
-
+from sklearn import cross_validation
 
 def create_html_page_of_plots(list_of_plots):
     if not os.path.exists('html'):
