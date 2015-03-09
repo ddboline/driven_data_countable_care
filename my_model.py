@@ -118,11 +118,11 @@ def load_data():
     #print test_df_labels.columns
     #print test_df_values.columns
 
-    train_df_values, train_drop_list = cleanup_data(train_df_values)
-    test_df_values, test_drop_list = cleanup_data(test_df_values)
+    #train_df_values, train_drop_list = cleanup_data(train_df_values)
+    #test_df_values, test_drop_list = cleanup_data(test_df_values)
 
-    train_df_values = train_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
-    test_df_values = test_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
+    #train_df_values = train_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
+    #test_df_values = test_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
 
     #get_plots(train_df_values)
 
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
     #model = RandomForestRegressor(n_estimators=50, n_jobs=-1)
-    model = LogisticRegression()
+    model = LogisticRegression(class_weight='auto')
     #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
