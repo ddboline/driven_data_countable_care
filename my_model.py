@@ -33,7 +33,7 @@ def create_html_page_of_plots(list_of_plots):
 def get_plots(in_df):
     list_of_plots = []
     #print in_df.columns
-    
+
     for c in in_df.columns:
         pl.clf()
         v = in_df[c][in_df[c].astype(int) != -1]
@@ -111,7 +111,7 @@ def load_data():
     train_df_values = pd.read_csv('train_values.csv', low_memory=False)
     test_df_labels = pd.read_csv('SubmissionFormat.csv')
     test_df_values = pd.read_csv('test_values.csv', low_memory=False)
-    
+
     print train_df_labels.columns
     print train_df_values.columns
     #print test_df_labels.columns
@@ -119,7 +119,7 @@ def load_data():
 
     train_df_values, train_drop_list = cleanup_data(train_df_values)
     test_df_values, test_drop_list = cleanup_data(test_df_values)
-    
+
     train_df_values = train_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
     test_df_values = test_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
 
@@ -133,14 +133,14 @@ def load_data():
 
     for c in train_df_values.columns:
         print c, train_df_values[c].dtype
-    
+
     xtrain = train_df_values.values[:,1:]
     ytrain = train_df_labels.values[:,1:]
     xtest = test_df_values.values[:,1:]
     ytest = test_df_labels
-    
+
     print xtrain.shape, ytrain.shape, xtest.shape, ytest.shape
-    
+
     return xtrain, ytrain, xtest, ytest
 
 def calculate_log_loss(ypred, ytest):
@@ -149,14 +149,14 @@ def calculate_log_loss(ypred, ytest):
     n = ypred.shape[0]
     ypred = ypred - ypred.min() # make ypred.min() == 0
     ypred = ypred / ypred.max() # make ypred.max() == 1
-    log_loss = (-1/n) * np.sum( ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
+    log_loss = (-1/n) * np.sum(ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
     return log_loss
 
 def score_model(model, xtrain, ytrain):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
-					random_state=randint)
+                                        random_state=randint)
     model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     ytest_pred = model.predict(xTest)
@@ -167,14 +167,14 @@ def score_model(model, xtrain, ytrain):
     return model.score(xTest, yTest)
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
-	model.fit(xtrain, ytrain)
-	ytest_pred = model.predict(xtest)
-	
-	for idx in range(ord('a'), ord('n')+1):
-		c = 'service_%s' % chr(idx)
-		ytest[c] = ytest_pred[:,idx]
-	
-	ytest.to_csv('submit.csv', index=False)
+    model.fit(xtrain, ytrain)
+    ytest_pred = model.predict(xtest)
+
+    for idx in range(ord('a'), ord('n')+1):
+        c = 'service_%s' % chr(idx)
+        ytest[c] = ytest_pred[:,idx]
+
+    ytest.to_csv('submit.csv', index=False)
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
@@ -182,4 +182,4 @@ if __name__ == '__main__':
     model = RandomForestRegressor(n_estimators=10, n_jobs=-1)
     print score_model(model, xtrain, ytrain)
 
-	prepare_submission(model, xtrain, ytrain, xtest, ytest)
+    prepare_submission(model, xtrain, ytrain, xtest, ytest)
