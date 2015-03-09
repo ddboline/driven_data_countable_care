@@ -150,6 +150,8 @@ def calculate_log_loss(ypred, ytest):
     if ypred.shape != ytest.shape:
         return False
     n = ypred.shape[0]
+    ypred = ypred - ypred.min() # make ypred.min() == 0
+    ypred = ypred / ypred.max() # make ypred.max() == 1
     log_loss = (-1/n) * np.sum( ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
     return log_loss
 
