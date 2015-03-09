@@ -167,6 +167,8 @@ def score_model(model, xtrain, ytrain):
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     ytest_pred = model.predict(xTest)
     print 'logloss', calculate_log_loss(ytest_pred, yTest)
+    print ytest_pred
+    print yTest
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     return model.score(xTest, yTest)
 
