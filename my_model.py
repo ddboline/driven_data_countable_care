@@ -180,7 +180,7 @@ def prepare_submission(model, xtrain, ytrain, xtest, ytest):
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
-    model = RandomForestRegressor(n_estimators=10, n_jobs=-1)
+    model = RandomForestRegressor(n_estimators=50, n_jobs=-1)
     #model = LogisticRegression()
     print score_model(model, xtrain, ytrain)
 
