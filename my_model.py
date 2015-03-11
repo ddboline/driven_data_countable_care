@@ -171,12 +171,12 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    #select = RFECV(model, scoring=scorer, step=0.1)
-    select = RandomizedSearchCV(estimator=model, 
-                                param_distributions={'penalty': ['l1', 'l2'],
-                                                     'C': uniform(), },
-                                scoring=scorer,
-                                n_jobs=-1, verbose=1)
+    #select = RandomizedSearchCV(estimator=model, 
+                                #param_distributions={'penalty': ['l1', 'l2'],
+                                                     #'C': uniform(), },
+                                #scoring=scorer,
+                                #n_jobs=-1, verbose=1)
+    select = RFECV(model, scoring=scorer, step=0.1, verbose=1)
     select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     ytest_pred = select.predict(xTest)
