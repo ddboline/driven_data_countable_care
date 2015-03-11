@@ -18,6 +18,8 @@ from sklearn.svm import SVC, NuSVC
 from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
 from sklearn.feature_selection import RFECV
 
+from sklearn.metrics import log_loss
+
 from scipy.stats import uniform
 
 def create_html_page_of_plots(list_of_plots):
@@ -159,10 +161,7 @@ def calculate_log_loss(ypred, ytest):
     if ypred.shape != ytest.shape:
         return False
     n = ypred.shape[0]
-    ypred = ypred - ypred.min() # make ypred.min() == 0
-    ypred = ypred / ypred.max() # make ypred.max() == 1
-    log_loss = (-1/n) * np.sum(ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
-    return log_loss
+    return log_loss(ytest, ypred)
 
 def scorer(estimator, X, y):
     yprob = estimator.predict_proba(X)[:,1]
