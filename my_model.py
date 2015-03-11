@@ -214,8 +214,8 @@ if __name__ == '__main__':
 
 
     #model = RandomForestClassifier(n_estimators=2000, n_jobs=-1)
-    model = LogisticRegression(class_weight='auto')
-    #model = SVC(kernel='linear', probability=True, verbose=False)
+    #model = LogisticRegression(class_weight='auto')
+    model = SVC(kernel='linear', probability=True, verbose=False)
     #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
