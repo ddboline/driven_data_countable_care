@@ -149,7 +149,7 @@ def load_data():
         #print c, train_df_values[c].dtype
 
     xtrain = train_df_values.values[:,1:]
-    ytrain = train_df_labels.values[:,1:3]
+    ytrain = train_df_labels.values[:,1]
     xtest = test_df_values.values[:,1:]
     ytest = test_df_labels
 
@@ -173,30 +173,28 @@ def score_model(model, xtrain, ytrain):
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
     #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
-    #param_grid = [{'C': 0.01},
-                  #{'C': 0.1}, 
-                  #{'C': 1.0}, 
-                  #{'C': 10.0},
-                  #{'C': 100.0},
-                  #{'C': 1000.0},
-                  #{'C': 10000.0},]
-    #select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
-    #clf = GridSearchCV(estimator=select, 
-                                #param_grid={'estimator_params': param_grid},
-                                #scoring=scorer,
-                                #n_jobs=-1, verbose=1)
-    #clf.fit(xTrain, yTrain)
-    model.fit(xTrain, yTrain)
+    param_grid = [{'alpha': 0.0001},
+                  {'alpha': 0.001}, 
+                  {'alpha': 0.01}, 
+                  {'alpha': 0.1},
+                  {'alpha': 1.0},]
+    select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
+    clf = GridSearchCV(estimator=select, 
+                                param_grid={'estimator_params': param_grid},
+                                scoring=scorer,
+                                n_jobs=-1, verbose=1)
+    clf.fit(xTrain, yTrain)
+    #model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    ytest_pred = model.predict(xTest)
-    ytest_prob = model.predict_proba(xTest)
+    ytest_pred = clf.predict(xTest)
+    ytest_prob = clf.predict_proba(xTest)
     print ytest_pred
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
     print 'logloss', log_loss(yTest, ytest_prob)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
-    return model.score(xTest, yTest)
+    return clf.score(xTest, yTest)
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
