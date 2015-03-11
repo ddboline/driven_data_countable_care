@@ -186,14 +186,15 @@ def score_model(model, xtrain, ytrain):
                                 #n_jobs=-1, verbose=1)
     #select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    model.fit(xTrain, yTrain)
-    ytest_pred = model.predict(xTest)
-    ytest_prob = model.predict_proba(xTest)
-    #print ytest_pred
-    #print ytest_prob
-    #print yTest
-    print ytest_prob.shape, yTest.shape
-    print 'logloss', log_loss(yTest, ytest_prob)
+    for n in range(14):
+        model.fit(xTrain, yTrain[:,n])
+        ytest_pred = model.predict(xTest)
+        ytest_prob = model.predict_proba(xTest)
+        #print ytest_pred
+        #print ytest_prob
+        #print yTest[:,n]
+        print ytest_prob.shape, yTest[:,n].shape
+        print 'logloss', log_loss(yTest[:,n], ytest_prob)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     #return model.score(xTest, yTest)
 
