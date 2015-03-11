@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
 
-from sklearn.svm import SVC
+from sklearn.svm import SVC, NuSVC
 
 from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
 from sklearn.feature_selection import RFECV
@@ -215,7 +215,8 @@ if __name__ == '__main__':
 
     #model = RandomForestClassifier(n_estimators=2000, n_jobs=-1)
     #model = LogisticRegression(class_weight='auto')
-    model = SVC(kernel='linear', probability=True, verbose=False)
+    #model = SVC(kernel='linear', probability=True, verbose=False)
+    model = NuSVC(kernel='linear', probability=True, verbose=False)
     #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
