@@ -164,7 +164,7 @@ def calculate_log_loss(ypred, ytest):
 
 def scorer(estimator, X, y):
     yprob = estimator.predict_proba(X)[:,1]
-    return calculate_log_loss(yprob, y)
+    return (-1.0) * calculate_log_loss(yprob, y)
 
 def score_model(model, xtrain, ytrain):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
