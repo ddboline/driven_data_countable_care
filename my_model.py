@@ -171,7 +171,7 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    param_grid = {'penalty': ['l1', 'l2'], 'C': uniform(), }
+    param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
     select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
     clf = RandomizedSearchCV(estimator=select, 
                                 param_distributions={'estimator_params': param_grid},
