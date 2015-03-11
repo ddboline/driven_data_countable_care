@@ -13,6 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
 
+from sklearn.grid_search import RandomizedSearchCV
 from sklearn.feature_selection import RFECV
 
 def create_html_page_of_plots(list_of_plots):
@@ -169,10 +170,10 @@ def score_model(model, xtrain, ytrain):
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
     select = RFECV(model, scoring=scorer)
-    model.fit(xTrain, yTrain)
+    select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    ytest_pred = model.predict(xTest)
-    ytest_prob = model.predict_proba(xTest)[:,1]
+    ytest_pred = select.predict(xTest)
+    ytest_prob = select.predict_proba(xTest)[:,1]
     print ytest_pred
     print ytest_prob
     print yTest
