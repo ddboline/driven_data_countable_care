@@ -175,7 +175,7 @@ def score_model(model, xtrain, ytrain):
     param_grid = [{'C': 0.01}, {'C': 0.1}, {'C': 1.0}, {'C': 10.0}, {'C': 100.0}, {'C': 1000.0}, {'C': 10000.0}]
     select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
     clf = GridSearchCV(estimator=select, 
-                                param_distributions={'estimator_params': param_grid},
+                                param_grid={'estimator_params': param_grid},
                                 scoring=scorer,
                                 n_jobs=-1, verbose=1)
     clf.fit(xTrain, yTrain)
