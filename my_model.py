@@ -175,6 +175,7 @@ def score_model(model, xtrain, ytrain):
     select = RandomizedSearchCV(model, 
                                 param_distributions={'penalty': ['l1', 'l2'],
                                                      'C': uniform(), },
+                                scoring=scorer,
                                 n_jobs=-1)
     select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
