@@ -171,23 +171,23 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    #select = RandomizedSearchCV(estimator=model, 
-                                #param_distributions={'penalty': ['l1', 'l2'],
-                                                     #'C': uniform(), },
-                                #scoring=scorer,
-                                #n_jobs=-1, verbose=1)
-    select = RFECV(model, scoring=scorer, step=0.1, verbose=1)
-    select.fit(xTrain, yTrain)
+    select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
+    clf = RandomizedSearchCV(estimator=select, 
+                                param_distributions={'penalty': ['l1', 'l2'],
+                                                     'C': uniform(), },
+                                scoring=scorer,
+                                n_jobs=-1, verbose=1)
+    clf.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    ytest_pred = select.predict(xTest)
-    ytest_prob = select.predict_proba(xTest)[:,1]
+    ytest_pred = clf.predict(xTest)
+    ytest_prob = clf.predict_proba(xTest)[:,1]
     print ytest_pred
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
     print 'logloss', calculate_log_loss(ytest_prob, yTest)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
-    return select.score(xTest, yTest)
+    return clf.score(xTest, yTest)
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
