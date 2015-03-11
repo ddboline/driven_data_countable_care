@@ -214,7 +214,7 @@ if __name__ == '__main__':
     #model = LogisticRegression(class_weight='auto')
     #model = SVC(kernel='linear', probability=True, verbose=False)
     #model = NuSVC(kernel='linear', probability=True, verbose=False)
-    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1')
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=1)
     print score_model(model, xtrain, ytrain)
 
     #prepare_submission(model, xtrain, ytrain, xtest, ytest)
