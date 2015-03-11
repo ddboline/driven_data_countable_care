@@ -179,23 +179,23 @@ def score_model(model, xtrain, ytrain):
                   #{'alpha': 0.1},
                   #{'alpha': 1.0},
                   ]
-    select = RFECV(estimator=model, scoring=scorer, verbose=1, step=0.01)
-    clf = GridSearchCV(estimator=select, 
-                                param_grid={'estimator_params': param_grid},
-                                scoring=scorer,
-                                n_jobs=-1, verbose=1)
-    clf.fit(xTrain, yTrain)
+    select = RFECV(estimator=model, scoring=scorer, verbose=1, step=1)
+    #clf = GridSearchCV(estimator=select, 
+                                #param_grid={'estimator_params': param_grid},
+                                #scoring=scorer,
+                                #n_jobs=-1, verbose=1)
+    select.fit(xTrain, yTrain)
     #model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    ytest_pred = clf.predict(xTest)
-    ytest_prob = clf.predict_proba(xTest)
+    ytest_pred = select.predict(xTest)
+    ytest_prob = select.predict_proba(xTest)
     print ytest_pred
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
     print 'logloss', log_loss(yTest, ytest_prob)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
-    return clf.score(xTest, yTest)
+    return select.score(xTest, yTest)
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
