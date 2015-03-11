@@ -188,8 +188,8 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    #model = RandomForestClassifier(n_estimators=800, n_jobs=-1)
-    model = LogisticRegression(class_weight='auto')
+    model = RandomForestClassifier(n_estimators=800, n_jobs=-1)
+    #model = LogisticRegression(class_weight='auto')
     #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
