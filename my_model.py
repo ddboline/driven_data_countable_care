@@ -199,7 +199,7 @@ def score_model(model, xtrain, ytrain):
     #return model.score(xTest, yTest)
 
 def train_model(model, xtrain, ytrain, index=-1):
-    
+    return
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
