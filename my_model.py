@@ -194,6 +194,7 @@ def score_model(model, xtrain, ytrain):
                                     scoring=scorer,
                                     n_jobs=-1, verbose=1)
         clf.fit(xTrain, yTrain[:,n])
+        print clf
         ytest_pred = clf.predict(xTest)
         ytest_prob = clf.predict_proba(xTest)
         print ytest_prob.shape, yTest[:,n].shape
@@ -220,7 +221,7 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=5)
     print score_model(model, xtrain, ytrain)
 
     #prepare_submission(model, xtrain, ytrain, xtest, ytest)
