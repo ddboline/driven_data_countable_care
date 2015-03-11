@@ -16,6 +16,8 @@ from sklearn import cross_validation
 from sklearn.grid_search import RandomizedSearchCV
 from sklearn.feature_selection import RFECV
 
+from scipy.stats import uniform
+
 def create_html_page_of_plots(list_of_plots):
     if not os.path.exists('html'):
         os.makedirs('html')
@@ -169,7 +171,11 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    select = RFECV(model, scoring=scorer)
+    #select = RFECV(model, scoring=scorer)
+    select = RandomizedSearchCV(model, 
+                                param_distributions={'penalty': ['l1', 'l2'],
+                                                     'C': uniform(), },
+                                n_jobs=-1)
     select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     ytest_pred = select.predict(xTest)
