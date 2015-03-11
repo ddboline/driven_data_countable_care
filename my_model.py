@@ -158,9 +158,9 @@ def load_data():
     return xtrain, ytrain, xtest, ytest
 
 def calculate_log_loss(ypred, ytest):
-    if ypred.shape != ytest.shape:
-        return False
-    n = ypred.shape[0]
+    #if ypred.shape != ytest.shape:
+        #return False
+    #n = ypred.shape[0]
     return log_loss(ytest, ypred)
 
 def scorer(estimator, X, y):
