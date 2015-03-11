@@ -2,25 +2,24 @@
 
 import os
 
+import cPickle as pickle
+
 import matplotlib
 matplotlib.use('Agg')
 import pylab as pl
 import numpy as np
 import pandas as pd
+from scipy.stats import uniform
 
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
-
 from sklearn.svm import SVC, NuSVC
-
 from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
 from sklearn.feature_selection import RFECV
-
 from sklearn.metrics import log_loss
 
-from scipy.stats import uniform
 
 def create_html_page_of_plots(list_of_plots):
     if not os.path.exists('html'):
@@ -187,7 +186,7 @@ def score_model(model, xtrain, ytrain):
     #select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     for n in range(14):
-        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
+        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.05)
         select.fit(xTrain, yTrain[:,n])
         ytest_pred = select.predict(xTest)
         ytest_prob = select.predict_proba(xTest)
@@ -198,6 +197,9 @@ def score_model(model, xtrain, ytrain):
         print 'logloss', log_loss(yTest[:,n], ytest_prob)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     #return model.score(xTest, yTest)
+
+def train_model(model, xtrain, ytrain, index=-1):
+    
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
@@ -213,10 +215,6 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    #model = RandomForestClassifier(n_estimators=2000, n_jobs=-1)
-    #model = LogisticRegression(class_weight='auto')
-    #model = SVC(kernel='linear', probability=True, verbose=False)
-    #model = NuSVC(kernel='linear', probability=True, verbose=False)
     model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0)
     print score_model(model, xtrain, ytrain)
 
