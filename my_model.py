@@ -164,8 +164,9 @@ def score_model(model, xtrain, ytrain):
                                         random_state=randint)
     model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    #ytest_pred = model.predict(xTest)
+    ytest_pred = model.predict(xTest)
     ytest_prob = model.predict_proba(xTest)[:,1]
+    print ytest_pred
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
