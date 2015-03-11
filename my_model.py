@@ -178,7 +178,7 @@ def score_model(model, xtrain, ytrain):
                   {'alpha': 0.01}, 
                   {'alpha': 0.1},
                   {'alpha': 1.0},]
-    select = RFECV(estimator=model, scoring=scorer)
+    select = RFECV(estimator=model, scoring=scorer, verbose=1)
     clf = GridSearchCV(estimator=select, 
                                 param_grid={'estimator_params': param_grid},
                                 scoring=scorer,
