@@ -13,6 +13,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
 
+from sklearn.svm import SVC
+
 from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
 from sklearn.feature_selection import RFECV
 
@@ -172,13 +174,13 @@ def score_model(model, xtrain, ytrain):
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
     #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
-    param_grid = [{'penalty': 'l1', 'C': 0.01}, {'penalty': 'l2', 'C': 0.01}, 
-                  {'penalty': 'l1', 'C': 0.1}, {'penalty': 'l2', 'C': 0.1}, 
-                  {'penalty': 'l1', 'C': 1.0}, {'penalty': 'l2', 'C': 1.0}, 
-                  {'penalty': 'l1', 'C': 10.0}, {'penalty': 'l2', 'C': 10.0}, 
-                  {'penalty': 'l1', 'C': 100.0}, {'penalty': 'l2', 'C': 100.0}, 
-                  {'penalty': 'l1', 'C': 1000.0}, {'penalty': 'l2', 'C': 1000.0}, 
-                  {'penalty': 'l1', 'C': 10000.0}, {'penalty': 'l2', 'C': 10000.0}]
+    param_grid = [{'C': 0.01},
+                  {'C': 0.1}, 
+                  {'C': 1.0}, 
+                  {'C': 10.0},
+                  {'C': 100.0},
+                  {'C': 1000.0},
+                  {'C': 10000.0},]
     select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
     clf = GridSearchCV(estimator=select, 
                                 param_grid={'estimator_params': param_grid},
@@ -211,7 +213,8 @@ if __name__ == '__main__':
 
 
     #model = RandomForestClassifier(n_estimators=2000, n_jobs=-1)
-    model = LogisticRegression(class_weight='auto')
+    #model = LogisticRegression(class_weight='auto')
+    model = SVC(kernel='linear', probability=True, verbose=True)
     #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
