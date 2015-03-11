@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
 
-from sklearn.grid_search import RandomizedSearchCV
+from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
 from sklearn.feature_selection import RFECV
 
 from scipy.stats import uniform
@@ -171,9 +171,10 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
+    #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
+    param_grid = [{'C': 0.01}, {'C': 0.1}, {'C': 1.0}, {'C': 10.0}, {'C': 100.0}, {'C': 1000.0}, {'C': 10000.0}]
     select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
-    clf = RandomizedSearchCV(estimator=select, 
+    clf = GridSearchCV(estimator=select, 
                                 param_distributions={'estimator_params': param_grid},
                                 scoring=scorer,
                                 n_jobs=-1, verbose=1)
