@@ -157,15 +157,15 @@ def load_data():
 
     return xtrain, ytrain, xtest, ytest
 
-def calculate_log_loss(ypred, ytest):
+#def calculate_log_loss(ypred, ytest):
     #if ypred.shape != ytest.shape:
         #return False
     #n = ypred.shape[0]
-    return log_loss(ytest, ypred)
+    #return log_loss(ytest, ypred)
 
 def scorer(estimator, X, y):
-    yprob = estimator.predict_proba(X)[:,1]
-    return 1.0 / calculate_log_loss(yprob, y)
+    yprob = estimator.predict_proba(X)
+    return 1.0 / log_loss(yprob, y)
 
 def score_model(model, xtrain, ytrain):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
@@ -194,7 +194,7 @@ def score_model(model, xtrain, ytrain):
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
-    print 'logloss', calculate_log_loss(ytest_prob, yTest)
+    print 'logloss', log_loss(ytest_prob, yTest)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     return model.score(xTest, yTest)
 
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     #model = LogisticRegression(class_weight='auto')
     #model = SVC(kernel='linear', probability=True, verbose=False)
     #model = NuSVC(kernel='linear', probability=True, verbose=False)
-    model = SGDClassifier(loss='log', n_jobs=-1)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1')
     print score_model(model, xtrain, ytrain)
 
     #prepare_submission(model, xtrain, ytrain, xtest, ytest)
