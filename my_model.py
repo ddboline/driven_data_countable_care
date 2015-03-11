@@ -174,14 +174,14 @@ def score_model(model, xtrain, ytrain):
                                         random_state=randint)
     #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
     param_grid = [{'alpha': 1e-6},
-                  {'alpha': 1e-5}, 
-                  {'alpha': 1e-4}, 
+                  {'alpha': 1e-5},
+                  {'alpha': 1e-4},
                   {'alpha': 1e-3},
                   {'alpha': 1e-2},
                   {'alpha': 1e-1},
                   ]
     #select = RFECV(estimator=model, scoring=scorer, verbose=1, step=1)
-    #clf = GridSearchCV(estimator=select, 
+    #clf = GridSearchCV(estimator=select,
                                 #param_grid={'estimator_params': param_grid},
                                 #scoring=scorer,
                                 #n_jobs=-1, verbose=1)
@@ -189,7 +189,7 @@ def score_model(model, xtrain, ytrain):
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     for n in range(14):
         select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
-        #clf = GridSearchCV(estimator=select, 
+        #clf = GridSearchCV(estimator=select,
                                     #param_grid={'estimator_params': param_grid},
                                     #scoring=scorer,
                                     #n_jobs=-1, verbose=1)
@@ -204,24 +204,67 @@ def score_model(model, xtrain, ytrain):
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     #return model.score(xTest, yTest)
 
-def train_model(model, xtrain, ytrain, index=-1):
+def train_model_parallel(model, xtrain, ytrain, index):
+    randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
+    xTrain, xTest, yTrain, yTest = \
+      cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
+                                        random_state=randint)
+    param_grid = [{'alpha': 1e-6},
+                  {'alpha': 1e-5},
+                  {'alpha': 1e-4},
+                  {'alpha': 1e-3},
+                  {'alpha': 1e-2},
+                  {'alpha': 1e-1},]
+
+    select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
+    clf = GridSearchCV(estimator=select,
+                                param_grid={'estimator_params': param_grid},
+                                scoring=scorer,
+                                n_jobs=-1, verbose=1)
+    clf.fit(xTrain, yTrain)
+    print clf
+    
+    ytest_prob = clf.predict_proba(xTest)
+    print 'logloss', log_loss(yTest, ytest_prob)
+    with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
+        pickle.dump(select, mfile, protocol=2)
+
     return
+
+def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
+    for n in range(14):
+        with gzip.open('model_%d.pkl.gz' % index, 'rb') as mfile:
+            model = pickle.load(mfile)
+            ytest_prob = model.predict_proba(xtest)
+            label = 'service_%s' % (chr(ord('a')+n))
+            ytest[label] = ytest_prob[:,1]
+    ytest.to_csv('submission.csv', index=False)
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
     ytest_pred = model.predict(xtest)
-
     for idx in range(ord('a'), ord('n')+1):
         c = 'service_%s' % chr(idx)
-        ytest[c] = ytest_pred[:,idx-ord('a')]
-
+        ytest[c] = ytest_pred[:,idx+ord('a')]
     ytest.to_csv('submit.csv', index=False)
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150, alpha=1e-6)
-    print score_model(model, xtrain, ytrain)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150)
 
-    #prepare_submission(model, xtrain, ytrain, xtest, ytest)
+    index = -1
+    for arg in os.sys.argv:
+        try:
+            index = int(arg)
+            break
+        except ValueError:
+            continue
+    if index == -1:
+        print score_model(model, xtrain, ytrain)
+        prepare_submission(model, xtrain, ytrain, xtest, ytest)
+    elif index >= 0 and index < 14:
+        train_model_parallel(model, xtrain, ytrain, index)
+    elif index == 14:
+        prepare_submission_parallel(xtrain, ytrain, xtest, ytest)
