@@ -174,29 +174,30 @@ def score_model(model, xtrain, ytrain):
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
     #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
-    param_grid = [{'C': 0.01},
-                  {'C': 0.1}, 
-                  {'C': 1.0}, 
-                  {'C': 10.0},
-                  {'C': 100.0},
-                  {'C': 1000.0},
-                  {'C': 10000.0},]
-    select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
-    clf = GridSearchCV(estimator=select, 
-                                param_grid={'estimator_params': param_grid},
-                                scoring=scorer,
-                                n_jobs=-1, verbose=1)
-    clf.fit(xTrain, yTrain)
+    #param_grid = [{'C': 0.01},
+                  #{'C': 0.1}, 
+                  #{'C': 1.0}, 
+                  #{'C': 10.0},
+                  #{'C': 100.0},
+                  #{'C': 1000.0},
+                  #{'C': 10000.0},]
+    #select = RFECV(estimator=model, scoring=scorer, step=0.1, verbose=1)
+    #clf = GridSearchCV(estimator=select, 
+                                #param_grid={'estimator_params': param_grid},
+                                #scoring=scorer,
+                                #n_jobs=-1, verbose=1)
+    #clf.fit(xTrain, yTrain)
+    model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    ytest_pred = clf.predict(xTest)
-    ytest_prob = clf.predict_proba(xTest)[:,1]
+    ytest_pred = model.predict(xTest)
+    ytest_prob = model.predict_proba(xTest)[:,1]
     print ytest_pred
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
     print 'logloss', calculate_log_loss(ytest_prob, yTest)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
-    return clf.score(xTest, yTest)
+    return model.score(xTest, yTest)
 
 def prepare_submission(model, xtrain, ytrain, xtest, ytest):
     model.fit(xtrain, ytrain)
@@ -212,9 +213,9 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    #model = RandomForestClassifier(n_estimators=2000, n_jobs=-1)
+    model = RandomForestClassifier(n_estimators=2000, n_jobs=-1)
     #model = LogisticRegression(class_weight='auto')
-    model = SVC(kernel='linear', probability=True, verbose=True)
+    #model = SVC(kernel='linear', probability=True, verbose=False)
     #model = SGDRegressor()
     print score_model(model, xtrain, ytrain)
 
