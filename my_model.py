@@ -189,18 +189,18 @@ def score_model(model, xtrain, ytrain):
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     for n in range(14):
         select = RFECV(estimator=model, scoring=scorer, verbose=1, step=0.1)
-        clf = GridSearchCV(estimator=select, 
-                                    param_grid={'estimator_params': param_grid},
-                                    scoring=scorer,
-                                    n_jobs=-1, verbose=1)
-        clf.fit(xTrain, yTrain[:,n])
-        print clf
-        ytest_pred = clf.predict(xTest)
-        ytest_prob = clf.predict_proba(xTest)
+        #clf = GridSearchCV(estimator=select, 
+                                    #param_grid={'estimator_params': param_grid},
+                                    #scoring=scorer,
+                                    #n_jobs=-1, verbose=1)
+        select.fit(xTrain, yTrain[:,n])
+        print select
+        ytest_pred = select.predict(xTest)
+        ytest_prob = select.predict_proba(xTest)
         print ytest_prob.shape, yTest[:,n].shape
         print 'logloss', log_loss(yTest[:,n], ytest_prob)
         with gzip.open('model_%d.pkl.gz', 'w') as mfile:
-            pickle.dump(clf, mfile, protocol=2)
+            pickle.dump(select, mfile, protocol=2)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     #return model.score(xTest, yTest)
 
@@ -221,7 +221,7 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=5)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150, alpha=1e-6)
     print score_model(model, xtrain, ytrain)
 
     #prepare_submission(model, xtrain, ytrain, xtest, ytest)
