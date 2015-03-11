@@ -167,7 +167,7 @@ def score_model(model, xtrain, ytrain):
     #ytest_pred = model.predict(xTest)
     ytest_prob = model.predict_proba(xTest)
     print 'logloss', calculate_log_loss(ytest_prob, yTest)
-    print ytest_pred
+    print ytest_prob
     print yTest
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     return model.score(xTest, yTest)
