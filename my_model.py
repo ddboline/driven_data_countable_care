@@ -189,7 +189,7 @@ def score_model(model, xtrain, ytrain):
     model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     ytest_pred = model.predict(xTest)
-    ytest_prob = model.predict_proba(xTest)[:,1]
+    ytest_prob = model.predict_proba(xTest)
     print ytest_pred
     print ytest_prob
     print yTest
