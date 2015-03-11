@@ -199,8 +199,8 @@ def score_model(model, xtrain, ytrain):
         ytest_prob = select.predict_proba(xTest)
         print ytest_prob.shape, yTest[:,n].shape
         print 'logloss', log_loss(yTest[:,n], ytest_prob)
-        with gzip.open('model_%d.pkl.gz', 'w') as mfile:
-            pickle.dump(select, mfile, protocol=2)
+        #with gzip.open('model_%d.pkl.gz', 'w') as mfile:
+            #pickle.dump(select, mfile, protocol=2)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     #return model.score(xTest, yTest)
 
