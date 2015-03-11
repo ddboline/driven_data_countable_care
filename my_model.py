@@ -187,7 +187,7 @@ def score_model(model, xtrain, ytrain):
     #select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     for n in range(14):
-        select = RFECV(estimator=model, scoring=scorer, verbose=1, step=0.1)
+        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
         select.fit(xTrain, yTrain[:,n])
         ytest_pred = select.predict(xTest)
         ytest_prob = select.predict_proba(xTest)
