@@ -164,8 +164,9 @@ def score_model(model, xtrain, ytrain):
                                         random_state=randint)
     model.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    ytest_pred = model.predict(xTest)
-    print 'logloss', calculate_log_loss(ytest_pred, yTest)
+    #ytest_pred = model.predict(xTest)
+    ytest_prob = model.predict_proba(xTest)
+    print 'logloss', calculate_log_loss(ytest_prob, yTest)
     print ytest_pred
     print yTest
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
