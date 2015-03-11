@@ -188,7 +188,7 @@ def score_model(model, xtrain, ytrain):
     #select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     for n in range(14):
-        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
+        select = RFECV(estimator=model, scoring=scorer, verbose=1, step=0.1)
         clf = GridSearchCV(estimator=select, 
                                     param_grid={'estimator_params': param_grid},
                                     scoring=scorer,
