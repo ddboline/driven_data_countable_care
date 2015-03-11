@@ -175,9 +175,10 @@ def score_model(model, xtrain, ytrain):
     #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
     param_grid = [{'alpha': 0.0001},
                   {'alpha': 0.001}, 
-                  {'alpha': 0.01}, 
-                  {'alpha': 0.1},
-                  {'alpha': 1.0},]
+                  #{'alpha': 0.01}, 
+                  #{'alpha': 0.1},
+                  #{'alpha': 1.0},
+                  ]
     select = RFECV(estimator=model, scoring=scorer, verbose=1)
     clf = GridSearchCV(estimator=select, 
                                 param_grid={'estimator_params': param_grid},
