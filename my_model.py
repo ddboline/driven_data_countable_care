@@ -165,7 +165,7 @@ def load_data():
 
 def scorer(estimator, X, y):
     yprob = estimator.predict_proba(X)
-    return 1.0 / log_loss(yprob, y)
+    return 1.0 / log_loss(y, yprob)
 
 def score_model(model, xtrain, ytrain):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
@@ -194,7 +194,7 @@ def score_model(model, xtrain, ytrain):
     print ytest_prob
     print yTest
     print ytest_prob.shape, yTest.shape
-    print 'logloss', log_loss(ytest_prob, yTest)
+    print 'logloss', log_loss(yTest, ytest_prob)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     return model.score(xTest, yTest)
 
