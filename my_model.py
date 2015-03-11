@@ -157,11 +157,11 @@ def load_data():
 
     return xtrain, ytrain, xtest, ytest
 
-#def calculate_log_loss(ypred, ytest):
-    #if ypred.shape != ytest.shape:
-        #return False
-    #n = ypred.shape[0]
-    #return log_loss(ytest, ypred)
+def calculate_log_loss(ytest, ypred):
+    if ypred.shape != ytest.shape:
+        return False
+    n = ypred.shape[0]
+    return (-1/n) * np.sum( ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
 
 def scorer(estimator, X, y):
     yprob = estimator.predict_proba(X)
@@ -227,13 +227,25 @@ def train_model_parallel(model, xtrain, ytrain, index):
     ytest_prob = clf.predict_proba(xTest)
     print 'logloss', log_loss(yTest, ytest_prob)
     with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
-        pickle.dump(select, mfile, protocol=2)
+        pickle.dump(clf, mfile, protocol=2)
 
     return
 
+def test_model_parallel(xtrain, ytrain):
+    randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
+    xTrain, xTest, yTrain, yTest = \
+      cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
+                                        random_state=randint)
+    ytest_prob = np.array(yTest.shape)
+    for n in range(14):
+        with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
+            model = pickle.load(mfile)
+            ytest_prob[:,n] = model.predict_proba(xTest)[:,1]
+    print calculate_log_loss(ytest, ytest_prob)
+
 def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
     for n in range(14):
-        with gzip.open('model_%d.pkl.gz' % index, 'rb') as mfile:
+        with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
             ytest_prob = model.predict_proba(xtest)
             label = 'service_%s' % (chr(ord('a')+n))
@@ -267,4 +279,6 @@ if __name__ == '__main__':
     elif index >= 0 and index < 14:
         train_model_parallel(model, xtrain, ytrain, index)
     elif index == 14:
+        test_model_parallel(xtrain, ytrain)
+    elif index == 15:
         prepare_submission_parallel(xtrain, ytrain, xtest, ytest)
