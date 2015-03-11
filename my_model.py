@@ -3,6 +3,7 @@
 import os
 
 import cPickle as pickle
+import gzip
 
 import matplotlib
 matplotlib.use('Agg')
@@ -172,11 +173,12 @@ def score_model(model, xtrain, ytrain):
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
     #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
-    param_grid = [{'alpha': 0.0001},
-                  {'alpha': 0.001}, 
-                  #{'alpha': 0.01}, 
-                  #{'alpha': 0.1},
-                  #{'alpha': 1.0},
+    param_grid = [{'alpha': 1e-6},
+                  {'alpha': 1e-5}, 
+                  {'alpha': 1e-4}, 
+                  {'alpha': 1e-3},
+                  {'alpha': 1e-2},
+                  {'alpha': 1e-1},
                   ]
     #select = RFECV(estimator=model, scoring=scorer, verbose=1, step=1)
     #clf = GridSearchCV(estimator=select, 
@@ -186,15 +188,18 @@ def score_model(model, xtrain, ytrain):
     #select.fit(xTrain, yTrain)
     #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
     for n in range(14):
-        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.05)
-        select.fit(xTrain, yTrain[:,n])
-        ytest_pred = select.predict(xTest)
-        ytest_prob = select.predict_proba(xTest)
-        #print ytest_pred
-        #print ytest_prob
-        #print yTest[:,n]
+        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
+        clf = GridSearchCV(estimator=select, 
+                                    param_grid={'estimator_params': param_grid},
+                                    scoring=scorer,
+                                    n_jobs=-1, verbose=1)
+        clf.fit(xTrain, yTrain[:,n])
+        ytest_pred = clf.predict(xTest)
+        ytest_prob = clf.predict_proba(xTest)
         print ytest_prob.shape, yTest[:,n].shape
         print 'logloss', log_loss(yTest[:,n], ytest_prob)
+        with gzip.open('model_%d.pkl.gz', 'w') as mfile:
+            pickle.dump(clf, mfile, protocol=2)
     #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
     #return model.score(xTest, yTest)
 
@@ -215,7 +220,7 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150)
     print score_model(model, xtrain, ytrain)
 
     #prepare_submission(model, xtrain, ytrain, xtest, ytest)
