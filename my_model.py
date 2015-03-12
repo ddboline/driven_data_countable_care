@@ -13,6 +13,7 @@ import pandas as pd
 from scipy.stats import uniform
 
 from sklearn.linear_model import SGDClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
@@ -173,37 +174,15 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    #param_grid = [{'penalty': ['l1', 'l2'], 'C': uniform(), }]
-    param_grid = [{'alpha': 1e-6},
-                  {'alpha': 1e-5},
-                  {'alpha': 1e-4},
-                  {'alpha': 1e-3},
-                  {'alpha': 1e-2},
-                  {'alpha': 1e-1},
-                  ]
-    #select = RFECV(estimator=model, scoring=scorer, verbose=1, step=1)
-    #clf = GridSearchCV(estimator=select,
-                                #param_grid={'estimator_params': param_grid},
-                                #scoring=scorer,
-                                #n_jobs=-1, verbose=1)
-    #select.fit(xTrain, yTrain)
-    #cvAccuracy = np.mean(cross_val_score(model, xtrain, ytrain, cv=2))
-    for n in range(14):
-        select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
-        #clf = GridSearchCV(estimator=select,
-                                    #param_grid={'estimator_params': param_grid},
-                                    #scoring=scorer,
-                                    #n_jobs=-1, verbose=1)
-        select.fit(xTrain, yTrain[:,n])
-        print select
-        ytest_pred = select.predict(xTest)
-        ytest_prob = select.predict_proba(xTest)
-        print ytest_prob.shape, yTest[:,n].shape
-        print 'logloss', log_loss(yTest[:,n], ytest_prob)
-        #with gzip.open('model_%d.pkl.gz', 'w') as mfile:
-            #pickle.dump(select, mfile, protocol=2)
-    #print 'rmsle', calculate_rmsle(ytest_pred, yTest)
-    #return model.score(xTest, yTest)
+    model.fit(xTrain, yTrain)
+    model.fit(xTrain, yTrain[:,n])
+    print model
+    ytest_pred = model.predict(xTest)
+    ytest_prob = model.predict_proba(xTest)
+    print ytest_prob.shape, yTest[:,n].shape
+    print 'logloss', log_loss(yTest[:,n], ytest_prob)
+    with gzip.open('model.pkl.gz', 'wb') as mfile:
+        pickle.dump(model, mfile, protocol=2)
 
 def train_model_parallel(model, xtrain, ytrain, index):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
@@ -265,7 +244,8 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150)
+    #model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150)
+    model = GradientBoostingClassifier(loss='deviance', n_estimators=200)
 
     index = -1
     for arg in os.sys.argv:
