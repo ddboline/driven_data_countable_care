@@ -159,9 +159,10 @@ def load_data():
 
 def calculate_log_loss(ytest, ypred):
     if ypred.shape != ytest.shape:
+        print ypred.shape, ytest.shape
         return False
     n = ypred.shape[0]
-    return (-1/n) * np.sum( ytest * np.log(ypred+1e-9) + (1-ytest) * np.log(1-ypred+1e-9))
+    return (-1/n) * np.sum( ytest * np.log(ypred+1e-15) + (1-ytest) * np.log(1-ypred+1e-15))
 
 def scorer(estimator, X, y):
     yprob = estimator.predict_proba(X)
@@ -236,12 +237,12 @@ def test_model_parallel(xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    ytest_prob = np.array(yTest.shape)
+    ytest_prob = np.zeros(yTest.shape)
     for n in range(14):
         with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
             ytest_prob[:,n] = model.predict_proba(xTest)[:,1]
-    print calculate_log_loss(ytest, ytest_prob)
+    print calculate_log_loss(yTest, ytest_prob)
 
 def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
     for n in range(14):
