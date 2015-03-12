@@ -100,8 +100,8 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    #model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=1, n_iter=200)
-    model = GradientBoostingClassifier(loss='deviance', n_estimators=100, verbose=1, max_depth=10)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=1, n_iter=200)
+    #model = GradientBoostingClassifier(loss='deviance', n_estimators=100, verbose=1, max_depth=10)
 
     index = -1
     for arg in os.sys.argv:
