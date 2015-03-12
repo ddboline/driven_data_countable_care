@@ -174,8 +174,8 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    model.fit(xTrain, yTrain)
-    model.fit(xTrain, yTrain[:,n])
+    #model.fit(xTrain, yTrain)
+    model.fit(xTrain, yTrain[:,0])
     print model
     ytest_pred = model.predict(xTest)
     ytest_prob = model.predict_proba(xTest)
@@ -197,18 +197,17 @@ def train_model_parallel(model, xtrain, ytrain, index):
                   {'alpha': 1e-1},]
 
     select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
-    clf = GridSearchCV(estimator=select,
+    model = GridSearchCV(estimator=select,
                                 param_grid={'estimator_params': param_grid},
                                 scoring=scorer,
                                 n_jobs=-1, verbose=1)
-    clf.fit(xTrain, yTrain)
-    print clf
+    model.fit(xTrain, yTrain)
+    print model
     
-    ytest_prob = clf.predict_proba(xTest)
+    ytest_prob = model.predict_proba(xTest)
     print 'logloss', log_loss(yTest, ytest_prob)
     with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
-        pickle.dump(clf, mfile, protocol=2)
-
+        pickle.dump(model, mfile, protocol=2)
     return
 
 def test_model_parallel(xtrain, ytrain):
@@ -244,8 +243,8 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
-    #model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=0, n_iter=150)
-    model = GradientBoostingClassifier(loss='deviance', n_estimators=200)
+    model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=1, n_iter=200)
+    #model = GradientBoostingClassifier(loss='deviance', n_estimators=100, verbose=1, max_depth=10)
 
     index = -1
     for arg in os.sys.argv:
@@ -256,7 +255,7 @@ if __name__ == '__main__':
             continue
     if index == -1:
         print score_model(model, xtrain, ytrain)
-        prepare_submission(model, xtrain, ytrain, xtest, ytest)
+        #prepare_submission(model, xtrain, ytrain, xtest, ytest)
     elif index >= 0 and index < 14:
         train_model_parallel(model, xtrain, ytrain, index)
     elif index == 14:
