@@ -28,7 +28,6 @@ def score_model(model, xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    #model.fit(xTrain, yTrain)
     model.fit(xTrain, yTrain[:,0])
     print model
     ytest_pred = model.predict(xTest)

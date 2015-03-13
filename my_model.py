@@ -88,20 +88,13 @@ def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
             ytest[label] = ytest_prob[:,1]
     ytest.to_csv('submission.csv', index=False)
 
-def prepare_submission(model, xtrain, ytrain, xtest, ytest):
-    model.fit(xtrain, ytrain)
-    ytest_pred = model.predict(xtest)
-    for idx in range(ord('a'), ord('n')+1):
-        c = 'service_%s' % chr(idx)
-        ytest[c] = ytest_pred[:,idx+ord('a')]
-    ytest.to_csv('submit.csv', index=False)
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
 
     #model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=1, n_iter=200)
-    model = GradientBoostingClassifier(loss='deviance', n_estimators=100, verbose=1, max_depth=10)
+    model = GradientBoostingClassifier(loss='deviance', verbose=1)
 
     index = -1
     for arg in os.sys.argv:
@@ -111,8 +104,7 @@ if __name__ == '__main__':
         except ValueError:
             continue
     if index == -1:
-        print score_model(model, xtrain, ytrain)
-        #prepare_submission(model, xtrain, ytrain, xtest, ytest)
+        score_model(model, xtrain, ytrain)
     elif index >= 0 and index < 14:
         train_model_parallel(model, xtrain, ytrain, index)
     elif index == 14:

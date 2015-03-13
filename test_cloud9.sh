@@ -9,4 +9,5 @@ rm countable_care.tar.gz
 D=`date +%Y%m%d%H%M%S`
 tar zcvf output_${1}_${D}.tar.gz model_${1}.pkl.gz output_${1}.out output_${1}.err
 scp output_${1}_${D}.tar.gz ddboline@ddbolineathome.mooo.com:/home/ddboline/setup_files/build/driven_data_countable_care/
-ssh ddboline@ddbolineathome.mooo.com "~/bin/send_to_gtalk done_driven_data_countable_care"
+ssh ddboline@ddbolineathome.mooo.com "~/bin/send_to_gtalk done_driven_data_countable_care_${1}"
+echo "JOB DONE ${1}"
