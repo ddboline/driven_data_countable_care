@@ -43,19 +43,21 @@ def train_model_parallel(model, xtrain, ytrain, index):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
                                         random_state=randint)
-    param_grid = [{'n_estimators': 10, 'max_depth': 5},
-                  {'n_estimators': 10, 'max_depth': 10},
-                  {'n_estimators': 10, 'max_depth': 40},
-                  {'n_estimators': 100, 'max_depth': 5},
-                  {'n_estimators': 100, 'max_depth': 10},
-                  {'n_estimators': 100, 'max_depth': 40},
-                  {'n_estimators': 200, 'max_depth': 5},
-                  {'n_estimators': 200, 'max_depth': 10},
-                  {'n_estimators': 200, 'max_depth': 40},]
+    n_est = [10, 100, 200]
+    m_dep = [5, 10, 40]
+    #param_grid = [{'n_estimators': 10, 'max_depth': 5},
+                  #{'n_estimators': 10, 'max_depth': 10},
+                  #{'n_estimators': 10, 'max_depth': 40},
+                  #{'n_estimators': 100, 'max_depth': 5},
+                  #{'n_estimators': 100, 'max_depth': 10},
+                  #{'n_estimators': 100, 'max_depth': 40},
+                  #{'n_estimators': 200, 'max_depth': 5},
+                  #{'n_estimators': 200, 'max_depth': 10},
+                  #{'n_estimators': 200, 'max_depth': 40},]
 
     #select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
     model = GridSearchCV(estimator=model,
-                                param_grid=param_grid,
+                                param_grid=dict(n_estimators=n_est, max_depth=m_dep),
                                 scoring=scorer,
                                 n_jobs=-1, verbose=1)
     model.fit(xTrain, yTrain)
