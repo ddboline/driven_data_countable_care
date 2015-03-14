@@ -68,16 +68,16 @@ def get_plots(in_df):
             list_of_plots.append('%s.png' % c)
     create_html_page_of_plots(list_of_plots)
 
-def cleanup_data(in_df, drop_missing=True):
+def cleanup_data(in_df, do_drop_missing=True, do_drop_list=True):
     drop_list = []
     for c in in_df.columns:
         if c.find('c_') == 0 or c == 'release':
             n = len(in_df[c])
             m = len(in_df[c][in_df[c].isnull()])
-            if n == m:
+            if n == m and do_drop_list:
                 drop_list.append(c)
                 continue
-            if drop_missing:
+            if do_drop_missing:
                 in_df[c] = in_df[c].fillna(chr(0x60))
             in_df[c] = in_df[c].map(lambda x: ord(x)-0x61).astype(np.int64)
             #if m > 0:
@@ -85,10 +85,10 @@ def cleanup_data(in_df, drop_missing=True):
         elif c.find('n_') == 0:
             n = len(in_df[c])
             m = len(in_df[c][in_df[c].isnull()])
-            if n == m:
+            if n == m and do_drop_list:
                 drop_list.append(c)
                 continue
-            if drop_missing:
+            if do_drop_missing:
                 in_df[c] = in_df[c].fillna(-1.0)
             in_df[c] = in_df[c].astype(np.float64)
             #if m > 0:
@@ -96,10 +96,10 @@ def cleanup_data(in_df, drop_missing=True):
         elif c.find('o_') == 0:
             n = len(in_df[c])
             m = len(in_df[c][in_df[c].isnull()])
-            if n == m:
+            if n == m and do_drop_list:
                 drop_list.append(c)
                 continue
-            if drop_missing:
+            if do_drop_missing:
                 in_df[c] = in_df[c].fillna(-1).astype(np.int64)
             #if m > 0:
                 #print c, n, m, in_df[c].min(), in_df[c].max()
@@ -117,11 +117,12 @@ def load_data():
     #print test_df_labels.columns
     #print test_df_values.columns
 
-    train_df_values, train_drop_list = cleanup_data(train_df_values)
-    test_df_values, test_drop_list = cleanup_data(test_df_values)
+    train_df_values, train_drop_list = cleanup_data(train_df_values, do_drop_list=False)
+    test_df_values, test_drop_list = cleanup_data(test_df_values, do_drop_list=False)
 
-    train_df_values = train_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
-    test_df_values = test_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
+    if len(train_drop_list)+len(test_drop_list) > 0:
+        train_df_values = train_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
+        test_df_values = test_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
 
     #get_plots(train_df_values)
 
