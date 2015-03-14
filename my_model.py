@@ -55,7 +55,7 @@ def train_model_parallel(model, xtrain, ytrain, index):
 
     #select = RFECV(estimator=model, scoring=scorer, verbose=0, step=0.1)
     model = GridSearchCV(estimator=model,
-                                param_grid={'estimator_params': param_grid},
+                                param_grid=param_grid,
                                 scoring=scorer,
                                 n_jobs=-1, verbose=1)
     model.fit(xTrain, yTrain)
