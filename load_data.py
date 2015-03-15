@@ -106,7 +106,7 @@ def cleanup_data(in_df, do_drop_missing=True, do_drop_list=True):
     return in_df, drop_list
     #return in_df.drop(labels=drop_list, axis=1)
 
-def load_data():
+def load_data(do_drop_list=False):
     train_df_labels = pd.read_csv('train_labels.csv')
     train_df_values = pd.read_csv('train_values.csv', low_memory=False)
     test_df_labels = pd.read_csv('SubmissionFormat.csv')
@@ -117,8 +117,8 @@ def load_data():
     #print test_df_labels.columns
     #print test_df_values.columns
 
-    train_df_values, train_drop_list = cleanup_data(train_df_values, do_drop_list=False)
-    test_df_values, test_drop_list = cleanup_data(test_df_values, do_drop_list=False)
+    train_df_values, train_drop_list = cleanup_data(train_df_values, do_drop_list=do_drop_list)
+    test_df_values, test_drop_list = cleanup_data(test_df_values, do_drop_list=do_drop_list)
 
     if len(train_drop_list)+len(test_drop_list) > 0:
         train_df_values = train_df_values.drop(labels=train_drop_list+test_drop_list, axis=1)
