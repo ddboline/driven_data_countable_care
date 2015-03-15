@@ -73,6 +73,12 @@ def test_model_parallel(xtrain, ytrain):
     for n in range(14):
         with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
+            print 'grid scores', model.grid_scores_
+            print 'best score', model.best_score_
+            print 'best params', model.best_params_
+            est = model.best_estimator_
+            print 'RFECV n_features', est.n_features_
+            print 'RFECV grid scores', est.grid_scores_
             pyt = model.predict_proba(xTest)
             ytest_prob[:,n,:] = pyt
             sum_log_loss += log_loss(yTest[:,n], pyt)
@@ -87,16 +93,8 @@ def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
             ytest[label] = ytest_prob[:,1]
     ytest.to_csv('submission.csv', index=False)
 
-def prepare_submission(model, xtrain, ytrain, xtest, ytest):
-    model.fit(xtrain, ytrain)
-    ytest_pred = model.predict(xtest)
-    for idx in range(ord('a'), ord('n')+1):
-        c = 'service_%s' % chr(idx)
-        ytest[c] = ytest_pred[:,idx+ord('a')]
-    ytest.to_csv('submit.csv', index=False)
-
 if __name__ == '__main__':
-    xtrain, ytrain, xtest, ytest = load_data()
+    xtrain, ytrain, xtest, ytest = load_data(do_drop_list=True)
 
 
     model = SGDClassifier(loss='log', n_jobs=-1, penalty='l1', verbose=1, n_iter=200)
