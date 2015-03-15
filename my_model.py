@@ -79,6 +79,9 @@ def test_model_parallel(xtrain, ytrain):
     for n in range(14):
         with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
+            print 'grid scores', model.grid_scores_
+            print 'best score', model.best_score_
+            print 'best params', model.best_params_
             pyt = model.predict_proba(xTest)
             ytest_prob[:,n,:] = pyt
             sum_log_loss += log_loss(yTest[:,n], pyt)
