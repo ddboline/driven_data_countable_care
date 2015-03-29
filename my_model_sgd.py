@@ -56,7 +56,7 @@ def train_model_parallel(model, xtrain, ytrain, index):
                                 n_jobs=-1, verbose=1)
     model.fit(xTrain, yTrain)
     print model
-    
+
     ytest_prob = model.predict_proba(xTest)
     print 'logloss', log_loss(yTest, ytest_prob)
     with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
