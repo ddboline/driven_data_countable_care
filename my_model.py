@@ -7,14 +7,9 @@ import gzip
 
 import numpy as np
 
-from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import RandomForestRegressor
 from sklearn import cross_validation
-from sklearn.svm import SVC, NuSVC
-from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
-from sklearn.feature_selection import RFECV
+from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import log_loss
 
 from load_data import load_data
@@ -31,7 +26,6 @@ def score_model(model, xtrain, ytrain):
     #model.fit(xTrain, yTrain)
     model.fit(xTrain, yTrain[:,0])
     print model
-    ytest_pred = model.predict(xTest)
     ytest_prob = model.predict_proba(xTest)
     print ytest_prob.shape, yTest[:,n].shape
     print 'logloss', log_loss(yTest[:,n], ytest_prob)
